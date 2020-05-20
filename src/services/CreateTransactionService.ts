@@ -1,4 +1,4 @@
-// import AppError from '../errors/AppError';
+import AppError from '../errors/AppError';
 import { getRepository, getCustomRepository } from 'typeorm';
 
 import Transaction from '../models/Transaction';
@@ -36,7 +36,10 @@ class CreateTransactionService {
     }
 
     const transactionsRepository = getCustomRepository(TransactionsRepository);
-
+    const balance = await transactionsRepository.getBalance();
+    if(type === 'outcome' && value > balance.total) {
+      throw new AppError('invalid transaction', 400);
+    }
     const transaction = transactionsRepository.create({
       title,
       value,
