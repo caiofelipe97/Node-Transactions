@@ -32,7 +32,7 @@ class ImportTransactionsService {
       const [title, type, value, category] = line.map((cell: string) => {
         return cell.trim();
       });
-
+      console.log('to lendo');
       if (!title || !type || !value) return;
 
       categories.push(category);
@@ -43,12 +43,15 @@ class ImportTransactionsService {
     await new Promise(resolve => {
       parseCSV.on('end', resolve);
     });
+    console.log('CHEGOU AQUI 1');
+    console.log(categories);
 
     const existentCategories = await categoriesRepository.find({
       where: {
         title: In(categories),
       },
     });
+    console.log('CHEGOU AQUI 2');
 
     const existentCategoriesTitles = existentCategories.map(
       (category: Category) => category.title,
@@ -77,7 +80,7 @@ class ImportTransactionsService {
         type: transaction.type,
         value: transaction.value,
         category: finalCategories.find(
-          category => category.title === transaction.title,
+          category => category.title === transaction.category,
         ),
       })),
     );
